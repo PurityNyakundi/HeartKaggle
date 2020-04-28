@@ -1,0 +1,7 @@
+"0","caret::confusionMatrix("
+"0","  data = predict(xgboost_model, testf),"
+"0","  reference = testf$fbs"
+"0","  )"
+"2","Error in xgb.DMatrix(newdata, missing = missing) : 
+  xgb.DMatrix does not support construction from list
+"

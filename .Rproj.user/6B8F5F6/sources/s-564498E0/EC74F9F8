@@ -1,0 +1,27 @@
+{
+    "collab_server" : "",
+    "contents" : "",
+    "created" : 1587983361718.000,
+    "dirty" : false,
+    "encoding" : "UTF-8",
+    "folds" : "",
+    "hash" : "1440421272",
+    "id" : "EC74F9F8",
+    "lastKnownWriteTime" : 1588067662,
+    "last_content_update" : 1588067662427,
+    "path" : "D:/codebase/Heart issues/xgboostRtesting.Rmd",
+    "project_path" : "xgboostRtesting.Rmd",
+    "properties" : {
+        "cursorPosition" : "157,0",
+        "last_setup_crc32" : "564498E0bb338d19",
+        "scrollLine" : "147",
+        "tempName" : "Untitled2"
+    },
+    "read_only" : false,
+    "read_only_alternatives" : [
+    ],
+    "relative_order" : 2,
+    "source_on_save" : false,
+    "source_window" : "",
+    "type" : "r_markdown"
+}

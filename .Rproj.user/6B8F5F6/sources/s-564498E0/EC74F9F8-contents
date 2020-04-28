@@ -1,0 +1,162 @@
+---
+title: "Heart"
+author: "Purity"
+date: "27/04/2020"
+output: word_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+
+Given the features lets try to predict if a a person has a fasting blood suger or not.
+1 will represent has the blood sugar and 0 will represent doesnt,
+people with fasting blood sugar level contain 120mg/dl and greator.So using a supervised learning algorithm predict whether one has or not.
+
+```{r cars}
+#import data
+data2<-read.csv("heart.csv",stringsAsFactors = F,header = T)
+data2
+str(data2)
+```
+
+
+
+```{r pressure, echo=FALSE}
+#Lets check structure of data
+str(data2)
+dim(data2)
+colnames(data2) = c("age","sex","chest_pain_type","rest_bp","ser_cholestral","fast_blo_sugar","ret_elect","heart_rate","ex_ind","st_depr","slope_ex","maj_vess","defect","target")
+colnames(data2)
+colSums(is.na(data2))
+cols<-c("target","sex","chest_pain_type","ret_elect","ex_ind","maj_vess","defect")
+for (i in cols) {
+  data2[,i]=as.factor(data2[,i])
+  
+}
+str(data2)
+```
+```{r}
+data2$fast_blo_sugar<-as.character(data2$fast_blo_sugar)
+library(ranger)
+model<-ranger(fast_blo_sugar~.,data = data2[1:200,],num.trees = 1000,respect.unordered.factors = "order")
+t<-predict(model,data2[201:303,])
+test<-data2[201:303,]
+table(t$predictions,test$fast_blo_sugar)
+mean(t$predictions==test$fast_blo_sugar)
+?glm
+```
+```{r}
+train<-data2[1:200,]
+lmodel<-glm(fast_blo_sugar~.,train,family =  "binomial")
+predl<-predict(lmodel,test)
+predl_p<-ifelse(predl>0.5,1,0)
+table(predl_p,test$fast_blo_sugar)
+mean(predl_p==test$fast_blo_sugar)
+
+
+
+```
+```{r}
+summary(data2)
+```
+
+
+```{r}
+train_data<-data2[1:100,]
+test_data<-data2[101:203,]
+testf<-data2[204:303,]
+str(data2)
+library(xgboost)
+dtrain <- xgb.DMatrix(as.matrix(train_data), 
+                      label = as.numeric(train_data$fbs))
+dtest <- xgb.DMatrix(as.matrix(test_data), 
+                      label = as.numeric(test_data$fbs))
+
+
+```
+```{r}
+params <- list(max_depth = 3, 
+               objective = "binary:logistic",
+               silent = 0)
+
+watchlist <- list(train = dtrain, eval = dtest)
+
+#bst_model <- xgb.train(params = params, 
+                       #data = dtrain, 
+                       #nrounds = 10, 
+                       #watchlist = watchlist,
+                       #verbose = FALSE,
+                       #prediction = TRUE)
+#bst_model
+library(xgboost)
+library(tidyverse)
+
+xgboost_model <- xgboost(data = as.matrix(train_data), 
+                         label = as.numeric(train_data$fbs),
+                         max_depth = 3, 
+                         objective = "binary:logistic", 
+                         nrounds = 10, 
+                         verbose = FALSE,
+                         prediction = TRUE)
+xgboost_model
+summary(xgboost_model)
+
+predict(xgboost_model, 
+        as.matrix(testf)) %>%
+  as.tibble() %>%
+  mutate(prediction = round(value),
+         label = as.numeric(testf$fbs)) %>%
+  count(prediction, label)
+
+
+```
+```{r}
+str(data2)
+cols<-c("cp","sex","restecg","exang","target","slope","ca","thal")
+for (i in cols) {
+  data2[,i]=as.factor(data2[,i])
+  
+}
+str(data2)
+
+library(xgboost)
+trainp<-data2[1:200,]
+trainp$fbs<-as.factor(trainp$fbs)
+testp<-data2[201:303,]
+testp$fbs<-as.factor(testp$fbs)
+
+library(caret)
+model_gbm <- train(fbs ~ .,
+                          data = trainp,
+                          method = "gbm",
+                          preProcess = c("scale", "center"),
+                          trControl = trainControl(method = "repeatedcv", 
+                                                  number = 5, 
+                                                  repeats = 3, 
+                                                  verboseIter = FALSE),
+                          verbose = 0)
+model_gbm
+
+caret::confusionMatrix(
+  data = predict(model_gbm, testp),
+  reference = testp$fbs
+  )
+
+```
+
+```{r}
+cv_model <- xgb.cv(params = params,
+                   data = dtrain, 
+                   nrounds = 100, 
+                   watchlist = watchlist,
+                   nfold = 5,
+                   verbose = FALSE,
+                   prediction = TRUE)
+cv_model
+
+
+?trainControl
+```
+

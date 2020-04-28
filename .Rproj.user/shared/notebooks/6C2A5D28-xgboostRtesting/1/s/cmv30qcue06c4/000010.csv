@@ -1,0 +1,7 @@
+"0","caret::confusionMatrix("
+"0","  data = predict(cv_model, test_data),"
+"0","  reference = test_data$fbs"
+"0","  )"
+"2","Error in UseMethod(""predict"") : 
+  no applicable method for 'predict' applied to an object of class ""xgb.cv.synchronous""
+"
